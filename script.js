@@ -5,8 +5,22 @@ const PROFILE_BASE_URL = "http://image.tmdb.org/t/p/w185";
 const BACKDROP_BASE_URL = "http://image.tmdb.org/t/p/w780";
 const CONTAINER = document.querySelector(".container");
 
+const onFilterClick = async(e) => {
+  let filetrTarget = e.target.innerText
+  filetrTarget = filetrTarget.toLowerCase();
+  filetrTarget = filetrTarget.replace(" ", "_")
+  console.log(filetrTarget)
+  // sessionStorage.setItem('filter', filetrTarget)
+  // window.location.reload();
+  const filteredMovies = await fetchMovies(filetrTarget)
+  renderMovies(filteredMovies.results)
+}
+
 // Don't touch this function please
 const autorun = async () => {
+  // if (!sessionStorage.getItem('filter'))
+  //   sessionStorage.setItem('filter', 'now_playing')
+  // const movies = await fetchMovies(sessionStorage.getItem('filter'));
   const movies = await fetchMovies();
   renderMovies(movies.results);
 };
@@ -18,18 +32,26 @@ const constructUrl = (path) => {
   )}`;
 };
 
+// const constructSearch=(path,titleSearch)=>{
+//   return `${TMDB_BASE_URL}/${path}/movie?api_key=###&query=${titleSearch}`
+// }
+
 // You may need to add to this function, definitely don't delete it.
 const movieDetails = async (movie) => {
   const movieRes = await fetchMovie(movie.id);
-  renderMovie(movieRes);
+  const movieCredits = await fetchMovie(movie.id + "/credits");
+  const movieTrailer = await fetchMovie(movie.id + "/videos");
+  const movieSimilar = await fetchMovie(movie.id + "/similar");
+  renderMovie(movieRes, movieCredits, movieTrailer.results, movieSimilar.results);
 };
 
 // This function is to fetch movies. You may need to add it or change some part in it in order to apply some of the features.
-const fetchMovies = async () => {
-  const url = constructUrl(`movie/now_playing`);
+const fetchMovies = async (movieFilter = "now_playing") => {
+  const url = constructUrl(`movie/${movieFilter}`);
   const res = await fetch(url);
   return res.json();
 };
+
 
 // Don't touch this function please. This function is to fetch one movie.
 const fetchMovie = async (movieId) => {
@@ -40,13 +62,19 @@ const fetchMovie = async (movieId) => {
 
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovies = (movies) => {
+  console.log( movies)
   movies.map((movie) => {
     const movieDiv = document.createElement("div");
+    movieDiv.setAttribute('class', 'lg:ml-10 bg-gradient-to-r from-blue-100 via-blue-300 to-blue-500 text text-2xl text-center max-w-sm rounded overflow-hidden shadow-lg cursor-pointer')
     movieDiv.innerHTML = `
-        <img src="${BACKDROP_BASE_URL + movie.backdrop_path}" alt="${
-      movie.title
-    } poster">
-        <h3>${movie.title}</h3>`;
+    <img class="w-full" src="${BACKDROP_BASE_URL + movie.backdrop_path}" alt="Sunset in the mountains">
+  <div class="px-2 py-2">
+    <div class="font-bold text-xl mb-2">${movie.title}</div>
+  
+  </div>
+  
+        `;
+
     movieDiv.addEventListener("click", () => {
       movieDetails(movie);
     });
@@ -55,27 +83,47 @@ const renderMovies = (movies) => {
 };
 
 // You'll need to play with this function in order to add features and enhance the style.
-const renderMovie = (movie) => {
+const renderMovie = (movie, movieCast) => {
+  CONTAINER.setAttribute('class', `grid grid-cols-3 grid-rows-3 min-h-screen  text-black`)
+  CONTAINER.style.background = `linear-gradient(rgb(255 255 255 / 90%), rgb(255 255 255 / 40%)), url(${BACKDROP_BASE_URL + movie.backdrop_path}) no-repeat `
+  CONTAINER.style.backgroundSize = "cover"
+
   CONTAINER.innerHTML = `
-    <div class="row">
-        <div class="col-md-4">
-             <img id="movie-backdrop" src=${
-               BACKDROP_BASE_URL + movie.backdrop_path
-             }>
-        </div>
-        <div class="col-md-8">
-            <h2 id="movie-title">${movie.title}</h2>
-            <p id="movie-release-date"><b>Release Date:</b> ${
-              movie.release_date
-            }</p>
+
+  <div>
+   ${movie.original_language}
+  </div>
+        <div class="col-start-2 col-end-4 row-start-2 ">
+            <h2 id="movie-title" class="text-[50px]">${movie.title}</h2>
+            <p id="movie-release-date" class="pt-[30px]"><b>Release Date:</b> ${movie.release_date
+    }</p>
             <p id="movie-runtime"><b>Runtime:</b> ${movie.runtime} Minutes</p>
             <h3>Overview:</h3>
             <p id="movie-overview">${movie.overview}</p>
+       
         </div>
-        </div>
-            <h3>Actors:</h3>
-            <ul id="actors" class="list-unstyled"></ul>
-    </div>`;
+            <h3 class="col-span-3 row-start-3 text-[30px] pl-[50px] " >Actors: <ul class="actorList"> </ul></h3>
+       
+      `;
+  const actorList = document.querySelector(".actorList")
+
+  actorList.setAttribute('class', 'flex flex-row justify-center pt-[100px] gap-x-[12px]')
+
+  movieCast.cast.slice(0, 5).forEach(actor => {
+    const actorCast = document.createElement("li");
+    actorCast.innerHTML = `${"'" + actor.name + "'"}`
+    actorList.appendChild(actorCast);
+    console.log(actor)
+  })
+  console.log(movieCast)
+  // for (let i=0;i<=5;i++){
+  //   const actor =document.createElement("li");
+  //   actor.innerHTML=`${"'"+movieCast.cast[i].profile_path+"'"}`
+  //   actorList.appendChild(actor);
+  //   console.log(movieCast.cast[i]) 
+  // }
+
+
 };
 
 document.addEventListener("DOMContentLoaded", autorun);
