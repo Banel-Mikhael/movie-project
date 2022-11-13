@@ -112,13 +112,10 @@ const genreSelector = () => {
       }
       
        const genredMovies = API_URL + "&with_genres=" + encodeURI(selectedGenre.join(","));
-       
+
        sessionStorage.setItem('filter', genredMovies)
        sessionStorage.setItem('isFullUrl', 1)
        window.location.reload();
-     
-      //  renderMovies(fetchgenre(genredMovies))
-     
     })
     genreList.appendChild(genreItem)
   })
@@ -133,7 +130,13 @@ const onFilterClick = async (e) => {
   sessionStorage.setItem('isFullUrl', 0);
   window.location.reload();
   // const filteredMovies = await fetchMovies(filetrTarget)
-  // renderMovies(filteredMovies.results)
+  // renderMovies(filte redMovies.results)
+}
+
+const onHomeClick = () => {
+  sessionStorage.setItem('filter', 'now_playing');
+  sessionStorage.setItem('isFullUrl', 0);
+  window.location.reload();
 }
 
 // Don't touch this function please
@@ -143,7 +146,6 @@ const autorun = async () => {
     sessionStorage.setItem('filter', 'now_playing') 
     sessionStorage.setItem('isFullUrl', 0);
   }
-    
   const movies = await fetchMovies();
   // const movies = await fetchMovies();
   renderMovies(movies.results);
