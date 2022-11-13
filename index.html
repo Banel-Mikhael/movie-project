@@ -8,7 +8,7 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Movie</title>
+    <title>Movies Project</title>
 </head>
 
 <body>
@@ -61,8 +61,8 @@
                     class="flex flex-col mt-4 bg-gray-50 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
                     <li>
                         <a href="#"
-                        onclick="onHomeClick(event)"
-                            class="block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-white dark:bg-blue-600 md:dark:bg-transparent"
+                       onclick="onHomeClick(event)"
+                            class=" block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-white dark:bg-blue-600 md:dark:bg-transparent"
                             aria-current="page">Home</a>
                     </li>
 
@@ -89,9 +89,8 @@
 
 
                     <li>
-                        <a href="#"
-                            class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Actor
-                            List</a>
+                        <a href="#" 
+                            class="actorsList block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Actor List</a>
                     </li>
 
 
@@ -127,7 +126,7 @@
                         </ul>
                     </div>
                     <li>
-                        <a href="#"
+                        <a href="#" onclick="onAboutClick(event)"
                             class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
                     </li>
 
@@ -137,12 +136,30 @@
     </nav>
 
     <div
-        class="container  h-full w-full grid lg:grid-cols-3 lg:gap-y-[20px] lg:grid-rows-4  gap-y-4 lg:gap-x-4  sm:grid-cols-2 sm:gap-x-4 min-h-screen ">
+        class="container dark:bg-slate-800 h-full w-full grid lg:grid-cols-3 lg:gap-y-[20px] lg:grid-rows-4  gap-y-4 lg:gap-x-4  sm:grid-cols-2 sm:gap-x-4 min-h-screen ">
     </div>
 
     <footer class="bg-gray-100 text-center lg:text-left bg-gradient-to-b from-gray-900 to-gray-600 bg-gradient-to-r">
         <div class="container p-6">
             <div class="grid lg:grid-cols-3 md:grid-cols-2">
+                <div class="mb-6">
+                    <h5 class="uppercase font-bold mb-2.5 text-white">Mhamad Marshal</h5>
+
+                    <ul class="list-none mb-0">
+                        <li>
+                            <a href="#!" class="text-white">GitHub</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-white">LinkedIn</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-white">Instagram</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-white">FaceBook</a>
+                        </li>
+                    </ul>
+                </div>
 
                 <div class="mb-6">
                     <h5 class="uppercase font-bold mb-2.5 text-white">Banel Mikhael</h5>
@@ -163,24 +180,7 @@
                     </ul>
                 </div>
 
-                <div class="mb-6">
-                    <h5 class="uppercase font-bold mb-2.5 text-white">Mhamad Marshal</h5>
-
-                    <ul class="list-none mb-0">
-                        <li>
-                            <a href="#!" class="text-white">GitHub</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-white">LinkedIn</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-white">Instagram</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-white">FaceBook</a>
-                        </li>
-                    </ul>
-                </div>
+                
 
                 <div class="mb-6">
                     <h5 class="uppercase font-bold mb-2.5 text-white">Riham Zaidan</h5>
@@ -210,3 +210,5 @@
 </body>
 
 </html>
+
+

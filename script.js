@@ -7,7 +7,10 @@ const API_KEY = "api_key=542003918769df50083a13c415bbc602"
 const API_URL =TMDB_BASE_URL+"/discover/movie?sort_by=popularity.desc&" + API_KEY
 const CONTAINER = document.querySelector(".container");
 const genreList = document.querySelector(".genreDropDown");
+const actorListButton=document.querySelector(".actorsList")
 
+
+// to choose genres (horror, romantic ...etc)
 let genres = [
   {
     "id": 28,
@@ -122,7 +125,7 @@ const genreSelector = () => {
 }
 
 genreSelector();
-
+// to choose movies(latest,popular,top rated ...etc)
 const onFilterClick = async (e) => {
   let filetrTarget = e.target.innerText;
   filetrTarget = filetrTarget.split(" ").join("_").toLowerCase();
@@ -132,7 +135,67 @@ const onFilterClick = async (e) => {
   // const filteredMovies = await fetchMovies(filetrTarget)
   // renderMovies(filte redMovies.results)
 }
+const onAboutClick =()=>{
+  CONTAINER.setAttribute("class","grid grid-cols-2 grid-rows-2")
+  CONTAINER.style.background = `linear-gradient(rgb(255 255 255 / 90%), rgb(255 255 255 / 40%)), url(https://wallpaperaccess.com/full/767353.jpg) no-repeat `
+  CONTAINER.innerHTML=` <figure class="col-start-1 col-end-3 bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800 text-white">
+  <img class="w-[10px] h-8 md:w-48 md:h-auto md:rounded-[50%] rounded-full mx-auto" src="/Banel Mikhael_Iraq_2022.jpg" alt="" width="384" height="512">
+  <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
+    <blockquote>
+      <p class="text-lg font-medium">
+      A highly motivated person, I am looking to work in a place with a positive, dynamic, and stable nature which has a healing atmosphere where I can use my experience and will inspire me to enhance my skills. 
+      </p>
+    </blockquote>
+    <figcaption class="font-medium">
+      <div class="text-sky-500 dark:text-sky-400">
+       Banel Mikhael
+      </div>
+      <div class="text-slate-700 dark:text-slate-500">
+       Front-End Developer/IT ,Duhok/Iraq
+      </div>
+    </figcaption>
+  </div>
+</figure> 
+<figure class="  bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800 text-white">
+  <img class="w-[10px] h-8 md:w-48 md:h-auto md:rounded-[30%] rounded-full mx-auto" src="" alt="" width="384" height="512">
+  <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
+    <blockquote>
+      <p class="text-lg font-medium">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam doloremque molestiae numquam aliquid officia reprehenderit veniam enim quasi asperiores. At molestias similique perferendis nostrum voluptatum iusto numquam quas harum iste, aperiam nobis animi impedit ullam consequuntur voluptates repellendus quasi est labore rerum mollitia inventore non. Quidem dolore officiis voluptates!
+      </p>
+    </blockquote>
+    <figcaption class="font-medium">
+      <div class="text-sky-500 dark:text-sky-400">
+      ANYONE
+      </div>
+      <div class="text-slate-700 dark:text-slate-500">
+       JOB AND ANYWHERE
+      </div>
+    </figcaption>
+  </div>
+</figure> 
+<figure class=" bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800 text-white ">
+  <img class="w-[10px] h-8 md:w-48 md:h-auto md:rounded-none rounded-full mx-auto" src="" alt="" width="384" height="512">
+  <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
+    <blockquote>
+      <p class="text-lg font-medium">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam doloremque molestiae numquam aliquid officia reprehenderit veniam enim quasi asperiores. At molestias similique perferendis nostrum voluptatum iusto numquam quas harum iste, aperiam nobis animi impedit ullam consequuntur voluptates repellendus quasi est labore rerum mollitia inventore non. Quidem dolore officiis voluptates!
+      </p>
+    </blockquote>
+    <figcaption class="font-medium">
+      <div class="text-sky-500 dark:text-sky-400">
+        ANYONE
+      </div>
+      <div class="text-slate-700 dark:text-slate-500">
+       ANYEHRE AND JOB
+      </div>
+    </figcaption>
+  </div>
+</figure> 
+`
 
+}
+// home button to go to main page
 const onHomeClick = () => {
   sessionStorage.setItem('filter', 'now_playing');
   sessionStorage.setItem('isFullUrl', 0);
@@ -147,8 +210,16 @@ const autorun = async () => {
     sessionStorage.setItem('isFullUrl', 0);
   }
   const movies = await fetchMovies();
+  const actors =await fetchActors()
   // const movies = await fetchMovies();
   renderMovies(movies.results);
+  renderActors(actors.results)
+};
+// construct url for actors page
+const constructActorsUrl = (path) => {
+  return `${TMDB_BASE_URL}/${path}?api_key=${atob(
+    "NTQyMDAzOTE4NzY5ZGY1MDA4M2ExM2M0MTViYmM2MDI="
+  )}`;
 };
 
 // Don't touch this function please
@@ -166,7 +237,20 @@ const movieDetails = async (movie) => {
   const movieSimilar = await fetchMovie(movie.id + "/similar");
   renderMovie(movieRes, movieCredits, movieTrailer.results, movieSimilar.results);
 };
+// to send info and show on pages
+const actorDetails = async (actor) => {
+  const actorRes = await fetchActors(actor.id);
+  const actorCredits=await fetchActors(actor.id+"/movie_credits")
+  renderActor(actorRes,actorCredits);
+};
 
+//  get actors from url
+const fetchActors = async (actors="popular") => {
+ let url =constructActorsUrl(`person/${actors}`)
+  const res = await fetch(url);
+  return res.json();
+};
+//  to get genres from url
 const fetchgenre = async (url) => {
   fetch(url)
   .then(res => res.json())
@@ -192,11 +276,11 @@ const fetchMovie = async (movieId) => {
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovies = (movies) => {
   // console.log( movies)
-  
   // movies.slice(0,18).forEach((movie)=>{})
   movies.map((movie) => {
     const movieDiv = document.createElement("div");
     movieDiv.setAttribute('class', 'lg:ml-10 bg-[conic-gradient(at_top,_var(--tw-gradient-stops))] from-gray-900 via-gray-100 to-gray-900 hover:opacity-[25%] text-2xl text-center max-w-sm rounded overflow-hidden shadow-lg cursor-pointer')
+    movieDiv.setAttribute("style","div:hover{ content: 'ADD';}")
     movieDiv.innerHTML = `
     <img class="w-full" src="${BACKDROP_BASE_URL + movie.backdrop_path}" alt="Sunset in the mountains">
   <div class="px-2 py-2">
@@ -214,9 +298,6 @@ const renderMovies = (movies) => {
     CONTAINER.appendChild(movieDiv);
   });
 };
-
- 
-
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovie = (movie, movieCast, videos, similarMovies) => {
   CONTAINER.setAttribute('class', `grid grid-cols-3 grid-rows-3 min-h-screen  text-black`)
@@ -233,8 +314,8 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
 <div class="col-start-2 col-end-4 row-start-1 flex flex-col ">
   <p class="pt-[300px] pl-[3px] "><span class="font-bold">Movie Language:</span>
       ${movie.original_language.toUpperCase()} </p>
-  <p class=" pl-[3px]"> <b>Rating :</b> &nbsp${movie.vote_average} <i class="fas fa-star"></i>&nbsp&nbsp</p>
-  <p class=" pl-[3px]"><b>Vote Count : </b>${movie.vote_count} </p>
+  <p  class="whitespace-pre pl-[3px]"><b>Rating :</b>${movie.vote_average+"★"+"   "+"<b>Vote Count : </b>"+""+movie.vote_count}</p>
+  
   <p class=" pl-[3px]"><b>Runtime:</b> ${movie.runtime} Minutes</p>
 </div>
 <div class="logoDiv col-start-1 col-end-2 row-start-2"> </div>
@@ -245,7 +326,7 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
 </div>
 <h3 class="col-span-3 row-start-3 text-[30px] pl-[50px] ">Actors: <ul class="actorList"> </ul>
 </h3>
-<div class="similar-movies    lg:col-start-1 lg:col-end-5 lg:row-start-4 lg:flex pr-[30px]">
+<div class="similar-movies lg:col-start-1 lg:col-end-5 lg:row-start-4 lg:flex pr-[30px]">
 </div>
       `;
 
@@ -258,7 +339,7 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
 
     logoDiv.appendChild(createDiv)
 
-    console.log(PROFILE_BASE_URL + movieLogo.logo_path)
+    // console.log(PROFILE_BASE_URL + movieLogo.logo_path)
   })
   const actorList = document.querySelector(".actorList")
 
@@ -275,6 +356,11 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
     <p>${actor.name} </p> `
 
     actorList.appendChild(actorCastDiv);
+
+    actorCastDiv.addEventListener("click",()=>{
+    actorDetails(actor);      
+      
+    })
 
   })
   // console.log(movieCast)
@@ -300,6 +386,95 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
       // console.log(movieDetails(singleMoive))  
     })
   })
+};
+
+
+// function to show all actors 
+const renderActors = (actors) => {
+  // console.log( movies)
+  // movies.slice(0,18).forEach((movie)=>{})
+  actors.map((actor) => {
+    const actorDiv = document.createElement("div");
+    actorDiv.setAttribute('class', 'lg:ml-10 bg-[conic-gradient(at_top,_var(--tw-gradient-stops))] from-gray-900 via-gray-100 to-gray-900 hover:opacity-[25%] text-2xl text-center max-w-sm rounded overflow-hidden shadow-lg cursor-pointer')
+    actorDiv.setAttribute("style","div:hover{ content: 'ADD';}")
+    actorDiv.innerHTML = `
+    <img class="w-full" src="${PROFILE_BASE_URL + actor.profile_path}" alt="Sunset in the mountains">
+  <div class="px-2 py-2">
+    <div class="font-bold text-xl mb-2">${actor.name}
+    
+    </div>
+  
+  </div>
+  
+        `;
+
+
+    actorDiv.addEventListener("click", () => {
+      actorDetails(actor);
+    });
+    actorListButton.addEventListener("click",()=>{
+      
+       
+      CONTAINER.appendChild(actorDiv);
+    })
+    
+  });
+};
+// function to show single actor with all info required
+const renderActor = (actor,actorCast) => {
+  // console.log(actor)
+  CONTAINER.setAttribute('class', `grid grid-cols-3 grid-rows-3 min-h-screen  text-black`)
+  CONTAINER.style.background = `linear-gradient(rgb(255 255 255 / 90%), rgb(255 255 255 / 40%)), url(https://wallpaperaccess.com/full/164886.jpg) no-repeat `
+  CONTAINER.style.backgroundSize = "cover"
+
+  CONTAINER.innerHTML = `
+  <div>
+  <img class="col-statrt-1 col-end-2  h-[400px] w-[400px] border-2 pt-[20px] pl-[20px] rounded-br-[30%] rounded-tl-[30%]" src="${PROFILE_BASE_URL + actor.profile_path}" alt="Sunset in the mountains">
+</div>
+
+<div class="col-start-2 col-end-4 row-start-1 flex flex-col ">
+ 
+  <p  class="pt-[300px] pl-[3px]"><b>Gender :</b> ${actor.gender ===2 ? "Male":"Female"}</p>
+  
+  <p class=" pl-[3px]"><b>popularity:</b> ${actor.popularity}</p>
+  <p class=" pl-[3px]"><b>Birthday:</b> ${actor.birthday}</p>
+  <p class=" pl-[3px]"><b>Death Day:</b> ${actor.deathday}</p>
+  
+</div>
+
+<div class="col-start-2 col-end-4 row-start-2 ">
+  <h2  class="text-[50px]">${actor.name}</h2>
+  <h3>Overview:</h3>
+  <p >${actor.biography}</p>
+</div>
+<h3 class="col-span-3 row-start-3 text-[30px]  ">Movies: <ul class="moviesActedIn"> </ul>
+</h3>
+
+      `;  
+
+      const moviesActedInList = document.querySelector(".moviesActedIn")
+
+      moviesActedInList.setAttribute('class', 'flex flex-row justify-center pt-[100px] gap-x-[12px]')
+    
+      actorCast.cast.slice(0, 5).forEach(movie => {
+        // let castImgUrl = actor.profile_path
+        // console.log("hola senior", castImgUrl)
+        console.log(movie.title)
+        const movieCastDiv = document.createElement("div");
+        movieCastDiv.setAttribute("class", "pl-[100px] cursor-pointer")
+        movieCastDiv.innerHTML = `
+       <img class="rounded-[30%] h-[125px] w-[12 5px]" src="${BACKDROP_BASE_URL + movie.backdrop_path}" > 
+        <p>${movie.title} </p> `
+    
+       
+        moviesActedInList.appendChild(movieCastDiv);
+    
+        movieCastDiv.addEventListener("click",()=>{
+        movieDetails(movie);      
+          
+        })
+    
+      })
 };
 
 document.addEventListener("DOMContentLoaded", autorun);
