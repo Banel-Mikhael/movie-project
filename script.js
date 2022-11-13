@@ -4,7 +4,7 @@ const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const PROFILE_BASE_URL = "http://image.tmdb.org/t/p/w185";
 const BACKDROP_BASE_URL = "http://image.tmdb.org/t/p/w780";
 const API_KEY = "api_key=542003918769df50083a13c415bbc602"
-const API_URL = TMDB_BASE_URL + "/discover/movie?sort_by=popularity.desc&" + API_KEY
+const API_URL =TMDB_BASE_URL+"/discover/movie?sort_by=popularity.desc&" + API_KEY
 const CONTAINER = document.querySelector(".container");
 const genreList = document.querySelector(".genreDropDown");
 
@@ -95,8 +95,8 @@ const genreSelector = () => {
     genreItem.setAttribute("class", "block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white")
     genreItem.id = genre.id
     genreItem.innerText = genre.name
-    genreItem.addEventListener("click", () => {
-
+    genreItem.addEventListener("click", (e) => {
+      e.preventDefault();
       if (selectedGenre.length == 0) {
         selectedGenre.push(genre.id)
       } else {
@@ -110,32 +110,41 @@ const genreSelector = () => {
           selectedGenre.push(genre.id)
         }
       }
-      console.log(selectedGenre)
-      // sessionStorage.setItem('filter', selectedGenre)
-      // window.location.reload();
-      const genredMovies = API_URL + "&with_genres=" + encodeURI(selectedGenre.join(","));
-      renderMovies(fetchgenre(genredMovies))
+      
+       const genredMovies = API_URL + "&with_genres=" + encodeURI(selectedGenre.join(","));
+       
+       sessionStorage.setItem('filter', genredMovies)
+       sessionStorage.setItem('isFullUrl', 1)
+       window.location.reload();
+     
+      //  renderMovies(fetchgenre(genredMovies))
+     
     })
     genreList.appendChild(genreItem)
   })
 }
+
 genreSelector();
 
 const onFilterClick = async (e) => {
-  let filetrTarget = e.target.innerText
-  filetrTarget = filetrTarget.toLowerCase();
-  filetrTarget = filetrTarget.replace(" ", "_")
-  sessionStorage.setItem('filter', filetrTarget)
+  let filetrTarget = e.target.innerText;
+  filetrTarget = filetrTarget.split(" ").join("_").toLowerCase();
+  sessionStorage.setItem('filter', filetrTarget);
+  sessionStorage.setItem('isFullUrl', 0);
   window.location.reload();
-  const filteredMovies = await fetchMovies(filetrTarget)
-  renderMovies(filteredMovies.results)
+  // const filteredMovies = await fetchMovies(filetrTarget)
+  // renderMovies(filteredMovies.results)
 }
 
 // Don't touch this function please
 const autorun = async () => {
   if (!sessionStorage.getItem('filter'))
-    sessionStorage.setItem('filter', 'now_playing')
-  const movies = await fetchMovies(sessionStorage.getItem('filter'));
+  {
+    sessionStorage.setItem('filter', 'now_playing') 
+    sessionStorage.setItem('isFullUrl', 0);
+  }
+    
+  const movies = await fetchMovies();
   // const movies = await fetchMovies();
   renderMovies(movies.results);
 };
@@ -164,8 +173,10 @@ const fetchgenre = async (url) => {
   })
 }
 // This function is to fetch movies. You may need to add it or change some part in it in order to apply some of the features.
-const fetchMovies = async (movieFilter) => {
-  const url = constructUrl(`movie/${movieFilter}`);
+const fetchMovies = async () => {
+  const isFullUrl = parseInt(sessionStorage.getItem('isFullUrl'));
+  const baseUrl = sessionStorage.getItem('filter');
+  let url = isFullUrl ? baseUrl : constructUrl(`movie/${baseUrl}`);
   const res = await fetch(url);
   return res.json();
 };
@@ -179,6 +190,8 @@ const fetchMovie = async (movieId) => {
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovies = (movies) => {
   // console.log( movies)
+  
+  // movies.slice(0,18).forEach((movie)=>{})
   movies.map((movie) => {
     const movieDiv = document.createElement("div");
     movieDiv.setAttribute('class', 'lg:ml-10 bg-[conic-gradient(at_top,_var(--tw-gradient-stops))] from-gray-900 via-gray-100 to-gray-900 hover:opacity-[25%] text-2xl text-center max-w-sm rounded overflow-hidden shadow-lg cursor-pointer')
@@ -199,6 +212,8 @@ const renderMovies = (movies) => {
     CONTAINER.appendChild(movieDiv);
   });
 };
+
+ 
 
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovie = (movie, movieCast, videos, similarMovies) => {
