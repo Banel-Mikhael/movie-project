@@ -8,6 +8,9 @@ const API_URL =TMDB_BASE_URL+"/discover/movie?sort_by=popularity.desc&" + API_KE
 const CONTAINER = document.querySelector(".container");
 const genreList = document.querySelector(".genreDropDown");
 const actorListButton=document.querySelector(".actorsList")
+const sliderCont=document.querySelector(".sliderContainer")
+sliderCont.setAttribute("class","dark:bg-slate-800")
+const slideSection =document.querySelector(".slider")
 
 
 // to choose genres (horror, romantic ...etc)
@@ -90,7 +93,6 @@ let genres = [
   }
 ]
 let selectedGenre = [];
-
 const genreSelector = () => {
   genreList.innerHTML = ''
   genres.forEach((genre) => {
@@ -123,10 +125,10 @@ const genreSelector = () => {
     genreList.appendChild(genreItem)
   })
 }
-
 genreSelector();
 // to choose movies(latest,popular,top rated ...etc)
 const onFilterClick = async (e) => {
+  
   let filetrTarget = e.target.innerText;
   filetrTarget = filetrTarget.split(" ").join("_").toLowerCase();
   sessionStorage.setItem('filter', filetrTarget);
@@ -135,15 +137,17 @@ const onFilterClick = async (e) => {
   // const filteredMovies = await fetchMovies(filetrTarget)
   // renderMovies(filte redMovies.results)
 }
+// About button to go plus design whole about page
 const onAboutClick =()=>{
   CONTAINER.setAttribute("class","grid grid-cols-2 grid-rows-2")
   CONTAINER.style.background = `linear-gradient(rgb(255 255 255 / 90%), rgb(255 255 255 / 40%)), url(https://wallpaperaccess.com/full/767353.jpg) no-repeat `
-  CONTAINER.innerHTML=` <figure class="col-start-1 col-end-3 bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800 text-white">
+  sliderCont.innerHTML=""
+  CONTAINER.innerHTML=` <figure class="col-start-1 col-end-3 bg-slate-100 p-8 md:p-0 dark:bg-slate-800 text-white">
   <img class="w-[10px] h-8 md:w-48 md:h-auto md:rounded-[50%] rounded-full mx-auto" src="/Banel Mikhael_Iraq_2022.jpg" alt="" width="384" height="512">
   <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
     <blockquote>
       <p class="text-lg font-medium">
-      A highly motivated person, I am looking to work in a place with a positive, dynamic, and stable nature which has a healing atmosphere where I can use my experience and will inspire me to enhance my skills. 
+      A highly motivated person, I like to work in a place with a positive, dynamic, and stable nature which has a healing atmosphere where I can use my experience and will inspire me to enhance my skills. 
       </p>
     </blockquote>
     <figcaption class="font-medium">
@@ -156,7 +160,7 @@ const onAboutClick =()=>{
     </figcaption>
   </div>
 </figure> 
-<figure class="  bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800 text-white">
+<figure class="  bg-slate-100 p-8 md:p-0 dark:bg-slate-800 text-white">
   <img class="w-[10px] h-8 md:w-48 md:h-auto md:rounded-[30%] rounded-full mx-auto" src="" alt="" width="384" height="512">
   <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
     <blockquote>
@@ -174,7 +178,7 @@ const onAboutClick =()=>{
     </figcaption>
   </div>
 </figure> 
-<figure class=" bg-slate-100 rounded-xl p-8 md:p-0 dark:bg-slate-800 text-white ">
+<figure class=" bg-slate-100 p-8 md:p-0 dark:bg-slate-800 text-white ">
   <img class="w-[10px] h-8 md:w-48 md:h-auto md:rounded-none rounded-full mx-auto" src="" alt="" width="384" height="512">
   <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
     <blockquote>
@@ -193,7 +197,6 @@ const onAboutClick =()=>{
   </div>
 </figure> 
 `
-
 }
 // home button to go to main page
 const onHomeClick = () => {
@@ -201,7 +204,6 @@ const onHomeClick = () => {
   sessionStorage.setItem('isFullUrl', 0);
   window.location.reload();
 }
-
 // Don't touch this function please
 const autorun = async () => {
   if (!sessionStorage.getItem('filter'))
@@ -221,14 +223,12 @@ const constructActorsUrl = (path) => {
     "NTQyMDAzOTE4NzY5ZGY1MDA4M2ExM2M0MTViYmM2MDI="
   )}`;
 };
-
 // Don't touch this function please
 const constructUrl = (path) => {
   return `${TMDB_BASE_URL}/${path}?api_key=${atob(
     "NTQyMDAzOTE4NzY5ZGY1MDA4M2ExM2M0MTViYmM2MDI="
   )}`;
 };
-
 // You may need to add to this function, definitely don't delete it.
 const movieDetails = async (movie) => {
   const movieRes = await fetchMovie(movie.id);
@@ -243,7 +243,6 @@ const actorDetails = async (actor) => {
   const actorCredits=await fetchActors(actor.id+"/movie_credits")
   renderActor(actorRes,actorCredits);
 };
-
 //  get actors from url
 const fetchActors = async (actors="popular") => {
  let url =constructActorsUrl(`person/${actors}`)
@@ -272,12 +271,25 @@ const fetchMovie = async (movieId) => {
   const res = await fetch(url);
   return res.json();
 };
-
 // You'll need to play with this function in order to add features and enhance the style.
 const renderMovies = (movies) => {
+  movies.slice(0,6).forEach((eachSlide,index)=>{
+ const slideDiv=document.createElement("img")
+ 
+ slideDiv.src=`${BACKDROP_BASE_URL + eachSlide.backdrop_path}`
+
+//  console.log("this is bu6ish",`${BACKDROP_BASE_URL+eachSlide.backdrop_path}`)
+ slideDiv.setAttribute("id",`slide-${index}`)
+ slideSection.appendChild(slideDiv)
+ slideDiv.addEventListener("click",()=>{
+  sliderCont.innerHTML=""
+  movieDetails(eachSlide);
+ })
+
+  })
   // console.log( movies)
   // movies.slice(0,18).forEach((movie)=>{})
-  movies.map((movie) => {
+  movies.slice(5,25).forEach((movie) => {
     const movieDiv = document.createElement("div");
     movieDiv.setAttribute('class', 'lg:ml-10 bg-[conic-gradient(at_top,_var(--tw-gradient-stops))] from-gray-900 via-gray-100 to-gray-900 hover:opacity-[25%] text-2xl text-center max-w-sm rounded overflow-hidden shadow-lg cursor-pointer')
     movieDiv.setAttribute("style","div:hover{ content: 'ADD';}")
@@ -303,7 +315,7 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
   CONTAINER.setAttribute('class', `grid grid-cols-3 grid-rows-3 min-h-screen  text-black`)
   CONTAINER.style.background = `linear-gradient(rgb(255 255 255 / 90%), rgb(255 255 255 / 40%)), url(${BACKDROP_BASE_URL + movie.backdrop_path}) no-repeat `
   CONTAINER.style.backgroundSize = "cover"
-
+  
   CONTAINER.innerHTML = `
   <div>
   <iframe
@@ -312,7 +324,8 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>;
 </div>
 <div class="col-start-2 col-end-4 row-start-1 flex flex-col ">
-  <p class="pt-[300px] pl-[3px] "><span class="font-bold">Movie Language:</span>
+<p class="directorName pt-[250px]  pl-[3px]"><b>Director :</b></p>
+  <p class=" pl-[3px] "><span class="font-bold">Movie Language:</span>
       ${movie.original_language.toUpperCase()} </p>
   <p  class="whitespace-pre pl-[3px]"><b>Rating :</b>${movie.vote_average+"★"+"   "+"<b>Vote Count : </b>"+""+movie.vote_count}</p>
   
@@ -332,7 +345,7 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
 
 
   movie.production_companies.slice(0, 1).forEach(movieLogo => {
-
+    const directorP=document.querySelector(".directorName").innerHTML=`${"<b>Production Company :</b>"+" "+movieLogo.name}`
     const logoDiv = document.querySelector(".logoDiv")
     const createDiv = document.createElement("div")
     createDiv.innerHTML = `<img class=" h-[300px] w-[400px]  " src="${PROFILE_BASE_URL + movieLogo.logo_path}"> `
@@ -387,13 +400,11 @@ const renderMovie = (movie, movieCast, videos, similarMovies) => {
     })
   })
 };
-
-
 // function to show all actors 
 const renderActors = (actors) => {
   // console.log( movies)
   // movies.slice(0,18).forEach((movie)=>{})
-  actors.map((actor) => {
+  actors.slice(0,18).forEach((actor) => {
     const actorDiv = document.createElement("div");
     actorDiv.setAttribute('class', 'lg:ml-10 bg-[conic-gradient(at_top,_var(--tw-gradient-stops))] from-gray-900 via-gray-100 to-gray-900 hover:opacity-[25%] text-2xl text-center max-w-sm rounded overflow-hidden shadow-lg cursor-pointer')
     actorDiv.setAttribute("style","div:hover{ content: 'ADD';}")
@@ -408,15 +419,17 @@ const renderActors = (actors) => {
   
         `;
 
-
-    actorDiv.addEventListener("click", () => {
-      actorDetails(actor);
-    });
     actorListButton.addEventListener("click",()=>{
+
+          CONTAINER.appendChild(actorDiv);
+          
+        })
+    actorDiv.addEventListener("click", () => {
       
-       
-      CONTAINER.appendChild(actorDiv);
-    })
+      actorDetails(actor);
+     
+    });
+  
     
   });
 };
@@ -476,5 +489,4 @@ const renderActor = (actor,actorCast) => {
     
       })
 };
-
 document.addEventListener("DOMContentLoaded", autorun);
